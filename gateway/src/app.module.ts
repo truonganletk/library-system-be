@@ -1,10 +1,10 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { ClientsModule, Transport } from '@nestjs/microservices';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './modules/auth/auth.module';
+import { BooksModule } from './modules/books/books.module';
 
 @Module({
   imports: [
@@ -24,35 +24,8 @@ import { AuthModule } from './modules/auth/auth.module';
       }),
       inject: [ConfigService],
     }),
-    ClientsModule.register([
-      {
-        name: 'BOOK_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'book-service',
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'book-consumer',
-          },
-        },
-      },
-      {
-        name: 'AUTH_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'auth-service',
-            brokers: ['localhost:9092'],
-          },
-          consumer: {
-            groupId: 'auth-service-consumer',
-          },
-        },
-      },
-    ]),
     AuthModule,
+    BooksModule,
   ],
   controllers: [AppController],
   providers: [AppService],
