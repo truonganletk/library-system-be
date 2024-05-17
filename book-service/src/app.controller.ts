@@ -5,6 +5,7 @@ import { CreateBookDto } from './dto/create.dto';
 import { SearchBooksDto } from './dto/search.dto';
 import { UpdateBookDto } from './dto/update.dto';
 import { ExceptionFilter } from './filters/rpc-exception.filter';
+import { BookStatus } from './entities/book.entity';
 
 @Controller()
 @UseFilters(new ExceptionFilter())
@@ -74,5 +75,10 @@ export class AppController {
   async deleteBook(id: number) {
     await this.booksService.remove(id);
     return JSON.stringify('Book deleted successfully');
+  }
+
+  @MessagePattern('update-status')
+  async updateStatus({ id, status }: { id: number; status: BookStatus }) {
+    return this.booksService.updateStatus(id, status);
   }
 }

@@ -1,29 +1,30 @@
 import { Module } from '@nestjs/common';
-import { BooksController } from './books.controller';
-import { BooksService } from './books.service';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { v4 as uuidv4 } from 'uuid';
+import { BooksModule } from '../books/books.module';
+import { LoanController } from './loan.controller';
+import { LoanService } from './loan.service';
 
 @Module({
   imports: [
     ClientsModule.register([
       {
-        name: 'BOOK_SERVICE',
+        name: 'LOAN_SERVICE',
         transport: Transport.KAFKA,
         options: {
           client: {
-            clientId: 'book-service' + uuidv4(),
+            clientId: 'loan-service' + uuidv4(),
             brokers: ['localhost:9092'],
           },
           consumer: {
-            groupId: 'book-consumer',
+            groupId: 'loan-consumer',
           },
         },
       },
     ]),
+    BooksModule,
   ],
-  controllers: [BooksController],
-  providers: [BooksService],
-  exports: [BooksService],
+  controllers: [LoanController],
+  providers: [LoanService],
 })
-export class BooksModule {}
+export class LoanModule {}

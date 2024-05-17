@@ -5,7 +5,7 @@ import { Repository } from 'typeorm';
 import { CreateBookDto } from './dto/create.dto';
 import { SearchBooksDto } from './dto/search.dto';
 import { UpdateBookDto } from './dto/update.dto';
-import { Book } from './entities/book.entity';
+import { Book, BookStatus } from './entities/book.entity';
 
 @Injectable()
 export class AppService {
@@ -73,5 +73,17 @@ export class AppService {
       });
     }
     return book;
+  }
+
+  // Update status of a book
+  async updateStatus(id: number, status: BookStatus): Promise<Book> {
+    const book = await this.booksRepository.findOneBy({ id: id });
+    if (!book) {
+      throw new RpcException({
+        message: `Book with ID ${id} not found.`,
+        status: 404,
+      });
+    }
+    return this.booksRepository.save({ ...book, status: status });
   }
 }

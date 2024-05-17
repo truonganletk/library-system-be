@@ -17,12 +17,12 @@ import { JwtAuthGuard } from '../auth/guard/jwt.guard';
 import { RolesGuard } from '../auth/guard/roles.guard';
 import { Roles } from 'src/decorators/roles.decorator';
 import { UpdateBookDto } from './dto/update.dto';
-import { Book } from './entities/book.entity';
+import { Book, BookStatus } from './entities/book.entity';
 
 @Controller('books')
 @ApiTags('Books')
 @ApiBearerAuth()
-// @UseGuards(JwtAuthGuard, RolesGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}
 
@@ -43,7 +43,6 @@ export class BooksController {
   // GET: Retrieve a single book by ID
   @Get(':id')
   async findOne(@Param('id') id: number) {
-    console.log(id);
     return this.booksService.getBookById(id);
   }
 
@@ -62,5 +61,23 @@ export class BooksController {
   @ApiBody({ type: UpdateBookDto })
   async update(@Param('id') id: number, @Body() updateBookDto: UpdateBookDto) {
     return this.booksService.updateBook(id, updateBookDto);
+  }
+
+  // PUT: Update status of a book
+  @Put(':id/status')
+  @Roles('super', 'admin')
+  @ApiParam({ name: 'id' })
+  @ApiBody({
+    schema: {
+      example: {
+        status: 'available',
+      },
+    },
+  })
+  async updateStatus(
+    @Param('id') id: number,
+    @Body('status') status: BookStatus,
+  ) {
+    return this.booksService.updateStatus(id, status);
   }
 }

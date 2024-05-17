@@ -3,7 +3,7 @@ import { ClientKafka } from '@nestjs/microservices';
 import { catchError } from 'rxjs';
 import { CreateBookDto } from './dto/create.dto';
 import { UpdateBookDto } from './dto/update.dto';
-import { Book } from './entities/book.entity';
+import { Book, BookStatus } from './entities/book.entity';
 
 @Injectable()
 export class BooksService {
@@ -67,6 +67,10 @@ export class BooksService {
     return this.handleKafkaSend('search-book', { searchBooksDto });
   }
 
+  updateStatus(id: number, status: BookStatus): Promise<any> {
+    return this.handleKafkaSend('update-status', { id, status });
+  }
+
   async onModuleInit() {
     [
       'get-all-book',
@@ -75,6 +79,7 @@ export class BooksService {
       'update-book',
       'delete-book',
       'search-book',
+      'update-status',
     ].forEach((topic) => this.bookClient.subscribeToResponseOf(topic));
     await this.bookClient.connect();
   }
