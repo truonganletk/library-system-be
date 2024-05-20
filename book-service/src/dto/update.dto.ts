@@ -25,6 +25,10 @@ export class UpdateBookDto {
   genre?: string;
 
   @IsOptional()
+  @IsString()
+  description?: string;
+
+  @IsOptional()
   @IsEnum(BookStatus)
   status?: BookStatus;
 }

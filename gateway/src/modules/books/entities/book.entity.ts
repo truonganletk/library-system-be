@@ -29,6 +29,10 @@ export class Book {
   @Column()
   year: number;
 
+  // Description of the book
+  @Column({ nullable: true })
+  description: string;
+
   // Genre of the book
   @Column({ length: 255, nullable: true })
   genre: string;

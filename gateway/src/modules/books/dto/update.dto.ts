@@ -27,6 +27,11 @@ export class UpdateBookDto {
 
   @IsOptional()
   @IsString()
+  @ApiProperty({ example: 'Fiction' })
+  description?: string;
+
+  @IsOptional()
+  @IsString()
   @ApiProperty({ example: 'Fantasy' })
   genre?: string;
 
