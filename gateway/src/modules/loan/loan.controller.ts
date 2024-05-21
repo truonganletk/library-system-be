@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpException,
   Param,
   Post,
   Query,
@@ -45,6 +46,9 @@ export class LoanController {
   @ApiBody({ type: CreateLoanDto })
   async create(@Body() createLoanDto: CreateLoanDto, @Request() req) {
     createLoanDto.user_id = req.user.id;
+    if (createLoanDto.due_date < createLoanDto.start_date) {
+      throw new HttpException('Due date cannot be before start date', 400);
+    }
     return this.loanService.create(createLoanDto);
   }
 

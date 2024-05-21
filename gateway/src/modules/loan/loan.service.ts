@@ -68,12 +68,28 @@ export class LoanService {
     });
   }
 
-  findOverdueBooks(): Promise<any> {
-    return this.handleKafkaSend('find-overdue', {});
+  async findOverdueBooks(): Promise<any> {
+    const loans: any = await this.handleKafkaSend('find-overdue', {});
+    const loans_with_books = [];
+
+    for (const loan of loans) {
+      const book = await this.bookService.getBookById(loan.book_id);
+      loans_with_books.push({ ...loan, book });
+    }
+
+    return loans_with_books;
   }
 
-  findAll(status: string): Promise<any> {
-    return this.handleKafkaSend('find-all', { status });
+  async findAll(status: string): Promise<any> {
+    const loans: any = await this.handleKafkaSend('find-all', { status });
+    const loans_with_books = [];
+
+    for (const loan of loans) {
+      const book = await this.bookService.getBookById(loan.book_id);
+      loans_with_books.push({ ...loan, book });
+    }
+
+    return loans_with_books;
   }
 
   async acceptLoan(id: number): Promise<any> {
@@ -92,14 +108,14 @@ export class LoanService {
 
   async getLoanByUserId(id: number): Promise<any> {
     const loans: any = await this.handleKafkaSend('get-loan-by-user', { id });
-    const books = [];
+    const loans_with_books = [];
 
     for (const loan of loans) {
       const book = await this.bookService.getBookById(loan.book_id);
-      books.push({ ...loan, book });
+      loans_with_books.push({ ...loan, book });
     }
 
-    return books;
+    return loans_with_books;
   }
 
   async onModuleInit() {
