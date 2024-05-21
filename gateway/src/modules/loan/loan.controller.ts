@@ -60,4 +60,9 @@ export class LoanController {
   async acceptLoan(@Body('id') id: number) {
     return this.loanService.acceptLoan(id);
   }
+
+  @Get('user')
+  async getLoanByUser(@Request() req) {
+    return this.loanService.getLoanByUserId(req.user.id);
+  }
 }

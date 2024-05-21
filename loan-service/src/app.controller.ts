@@ -40,4 +40,9 @@ export class AppController {
     const loan = await this.loansService.acceptLoan(id);
     return JSON.stringify(loan);
   }
+
+  @MessagePattern('get-loan-by-user')
+  async getLoanByUserId({ id }: { id: number }) {
+    return this.loansService.getLoanByUserId(id);
+  }
 }

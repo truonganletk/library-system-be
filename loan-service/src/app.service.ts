@@ -99,4 +99,12 @@ export class AppService {
     }
     return this.loansRepository.save(loan);
   }
+
+  async getLoanByUserId(id: number): Promise<Loan[]> {
+    return this.loansRepository.find({
+      where: {
+        user_id: id,
+      },
+    });
+  }
 }

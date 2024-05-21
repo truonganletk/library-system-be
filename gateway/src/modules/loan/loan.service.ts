@@ -90,12 +90,25 @@ export class LoanService {
     return loan;
   }
 
+  async getLoanByUserId(id: number): Promise<any> {
+    const loans: any = await this.handleKafkaSend('get-loan-by-user', { id });
+    const books = [];
+
+    for (const loan of loans) {
+      const book = await this.bookService.getBookById(loan.book_id);
+      books.push({ ...loan, book });
+    }
+
+    return books;
+  }
+
   async onModuleInit() {
     await this.loanClient.subscribeToResponseOf('create-loan');
     await this.loanClient.subscribeToResponseOf('return-book');
     await this.loanClient.subscribeToResponseOf('find-overdue');
     await this.loanClient.subscribeToResponseOf('find-all');
     await this.loanClient.subscribeToResponseOf('accept-loan');
+    await this.loanClient.subscribeToResponseOf('get-loan-by-user');
     await this.loanClient.connect();
   }
 }
